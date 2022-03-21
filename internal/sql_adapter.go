@@ -138,7 +138,7 @@ func (a SqlAdapter) FetchTableData(table table, limit int) ([]string, [][]string
 		}
 
 		for i, raw := range rawResult {
-			if columnTypes[i] == "string" {
+			// if columnTypes[i] == "string" {
 				if raw == nil {
 					// ignore
 				} else {
@@ -147,7 +147,7 @@ func (a SqlAdapter) FetchTableData(table table, limit int) ([]string, [][]string
 						columnValues[i] = append(columnValues[i], str)
 					}
 				}
-			}
+			// }
 		}
 	}
 
