@@ -76,23 +76,23 @@ func matchNameRule(name string, rules []nameRule) nameRule {
 // no rules for email or IP, since they can be detected automatically
 // keep last name and phone until better international support
 var nameRules = []nameRule{
-	nameRule{Name: "last_name", DisplayName: "last names", ColumnNames: []string{"lastname", "lname", "surname"}},
-	nameRule{Name: "phone", DisplayName: "phone numbers", ColumnNames: []string{"phone", "phonenumber"}},
-	nameRule{Name: "date_of_birth", DisplayName: "dates of birth", ColumnNames: []string{"dateofbirth", "birthday", "dob"}},
-	nameRule{Name: "postal_code", DisplayName: "postal codes", ColumnNames: []string{"zip", "zipcode", "postalcode"}},
-	nameRule{Name: "oauth_token", DisplayName: "OAuth tokens", ColumnNames: []string{"accesstoken", "refreshtoken"}},
+	// nameRule{Name: "last_name", DisplayName: "last names", ColumnNames: []string{"lastname", "lname", "surname"}},
+	// nameRule{Name: "phone", DisplayName: "phone numbers", ColumnNames: []string{"phone", "phonenumber"}},
+	// nameRule{Name: "date_of_birth", DisplayName: "dates of birth", ColumnNames: []string{"dateofbirth", "birthday", "dob"}},
+	// nameRule{Name: "postal_code", DisplayName: "postal codes", ColumnNames: []string{"zip", "zipcode", "postalcode"}},
+	// nameRule{Name: "oauth_token", DisplayName: "OAuth tokens", ColumnNames: []string{"accesstoken", "refreshtoken"}},
 }
 
 // TODO IPv6
 // TODO more popular access tokens
 var regexRules = []regexRule{
-	regexRule{Name: "email", DisplayName: "emails", Regex: regexp.MustCompile(`\b[\w][\w+.-]+(@|%40)[a-z\d-]+(\.[a-z\d-]+)*\.[a-z]+\b`)},
-	regexRule{Name: "ip", DisplayName: "IP addresses", Regex: regexp.MustCompile(`\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b`)},
+	// regexRule{Name: "email", DisplayName: "emails", Regex: regexp.MustCompile(`\b[\w][\w+.-]+(@|%40)[a-z\d-]+(\.[a-z\d-]+)*\.[a-z]+\b`)},
+	// regexRule{Name: "ip", DisplayName: "IP addresses", Regex: regexp.MustCompile(`\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b`)},
 	regexRule{Name: "credit_card", DisplayName: "credit card numbers", Regex: regexp.MustCompile(`\b[3456]\d{3}[\s+-]\d{4}[\s+-]\d{4}[\s+-]\d{4}\b`)},
 	regexRule{Name: "credit_card", DisplayName: "credit card numbers", Regex: regexp.MustCompile(`\b[3456]\d{15}\b`)},
-	regexRule{Name: "phone", DisplayName: "phone numbers", Regex: regexp.MustCompile(`\b(\+\d{1,2}\s)?\(?\d{3}\)?[\s+.-]\d{3}[\s+.-]\d{4}\b`)},
+	// regexRule{Name: "phone", DisplayName: "phone numbers", Regex: regexp.MustCompile(`\b(\+\d{1,2}\s)?\(?\d{3}\)?[\s+.-]\d{3}[\s+.-]\d{4}\b`)},
 	regexRule{Name: "ssn", DisplayName: "SSNs", Regex: regexp.MustCompile(`\b\d{3}[\s+-]\d{2}[\s+-]\d{4}\b`)},
-	regexRule{Name: "street", DisplayName: "street addresses", Regex: regexp.MustCompile(`(?i)\b\d+\b.{4,60}\b(st|street|ave|avenue|road|rd|drive|dr)\b`)},
+	// regexRule{Name: "street", DisplayName: "street addresses", Regex: regexp.MustCompile(`(?i)\b\d+\b.{4,60}\b(st|street|ave|avenue|road|rd|drive|dr)\b`)},
 	regexRule{Name: "oauth_token", DisplayName: "OAuth tokens", Regex: regexp.MustCompile(`ya29\..{60,200}`)}, // google
 }
 
@@ -163,31 +163,31 @@ func checkMatches(colIdentifier string, matchedValues [][]string, count int, onl
 		}
 	}
 
-	// find names
-	nameIndex := len(regexRules)
-	matchedData := matchedValues[nameIndex]
+	// // find names
+	// nameIndex := len(regexRules)
+	// matchedData := matchedValues[nameIndex]
 
-	if len(matchedData) > 0 {
-		confidence := "low"
-		if float64(len(matchedData))/float64(count) > 0.1 && len(unique(matchedData)) >= 10 {
-			confidence = "high"
-		}
+	// if len(matchedData) > 0 {
+	// 	confidence := "low"
+	// 	if float64(len(matchedData))/float64(count) > 0.1 && len(unique(matchedData)) >= 10 {
+	// 		confidence = "high"
+	// 	}
 
-		if onlyValues {
-			var matchedValues []string
-			for _, v := range matchedData {
-				tokens := tokenizer.Split(strings.ToLower(v), -1)
-				for _, v2 := range tokens {
-					if lastNamesSet.Contains(v2) {
-						matchedValues = append(matchedValues, v2)
-					}
-				}
-			}
-			matchedData = matchedValues
-		}
+	// 	if onlyValues {
+	// 		var matchedValues []string
+	// 		for _, v := range matchedData {
+	// 			tokens := tokenizer.Split(strings.ToLower(v), -1)
+	// 			for _, v2 := range tokens {
+	// 				if lastNamesSet.Contains(v2) {
+	// 					matchedValues = append(matchedValues, v2)
+	// 				}
+	// 			}
+	// 		}
+	// 		matchedData = matchedValues
+	// 	}
 
-		matchList = append(matchList, ruleMatch{RuleName: "last_name", DisplayName: "last names", Confidence: confidence, Identifier: colIdentifier, MatchedData: matchedData})
-	}
+	// 	matchList = append(matchList, ruleMatch{RuleName: "last_name", DisplayName: "last names", Confidence: confidence, Identifier: colIdentifier, MatchedData: matchedData})
+	// }
 
 	return matchList
 }
@@ -217,19 +217,19 @@ func checkTableData(table table, columnNames []string, columnValues [][]string) 
 	}
 
 	// check for location data
-	var latCol string
-	var lonCol string
-	for _, col := range columnNames {
-		if stringInSlice(col, []string{"latitude", "lat"}) {
-			latCol = col
-		} else if stringInSlice(col, []string{"longitude", "lon", "lng"}) {
-			lonCol = col
-		}
-	}
-	if latCol != "" && lonCol != "" {
-		// TODO show data
-		tableMatchList = append(tableMatchList, ruleMatch{RuleName: "location", DisplayName: "location data", Confidence: "medium", Identifier: table.displayName() + "." + latCol + "+" + lonCol, MatchType: "name"})
-	}
+	// var latCol string
+	// var lonCol string
+	// for _, col := range columnNames {
+	// 	if stringInSlice(col, []string{"latitude", "lat"}) {
+	// 		latCol = col
+	// 	} else if stringInSlice(col, []string{"longitude", "lon", "lng"}) {
+	// 		lonCol = col
+	// 	}
+	// }
+	// if latCol != "" && lonCol != "" {
+	// 	// TODO show data
+	// 	tableMatchList = append(tableMatchList, ruleMatch{RuleName: "location", DisplayName: "location data", Confidence: "medium", Identifier: table.displayName() + "." + latCol + "+" + lonCol, MatchType: "name"})
+	// }
 
 	return tableMatchList
 }
